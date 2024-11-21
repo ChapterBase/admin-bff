@@ -14,6 +14,7 @@ builder.Services.AddHttpClient<CoreServiceClient>();
 
 // Register services
 builder.Services.AddScoped<UserService>();
+builder.Services.AddScoped<BookService>();
 builder.Services.AddScoped<JwtUtilService>();
 
 // Resource server configuration

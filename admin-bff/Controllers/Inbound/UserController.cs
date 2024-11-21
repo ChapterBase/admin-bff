@@ -1,5 +1,6 @@
 ﻿
 using admin_bff.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
@@ -9,6 +10,7 @@ namespace admin_bff.Controllers.Inbound
 {
     [ApiController]
     [Route("[controller]")]
+    [Authorize]
     public class UserController : Controller
     {
         private readonly UserService _userService;

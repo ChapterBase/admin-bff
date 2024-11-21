@@ -39,5 +39,19 @@ namespace admin_bff.Controllers.Outbound
             return response;
         }
 
+        public async Task<HttpResponseMessage> SaveBookAsync(BookDto bookDto)
+        {
+            var jsonContent = new StringContent(
+                JsonConvert.SerializeObject(bookDto),
+                Encoding.UTF8,
+                "application/json"
+                );
+
+            var response = await _httpClient.PostAsync("/Book", jsonContent);
+            response.EnsureSuccessStatusCode();
+
+            return response;
+        }
+
     }
 }
