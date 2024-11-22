@@ -10,7 +10,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 
 // Register clients
-builder.Services.AddHttpClient<CoreServiceClient>();
+builder.Services.AddScoped<CoreServiceClient>();
 
 // Register services
 builder.Services.AddScoped<UserService>();

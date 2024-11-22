@@ -1,20 +1,17 @@
 ﻿using admin_bff.Dtos;
+using ChapterBaseAPI.Dtos;
+using RestSharp;
 using System;
-using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
 
 namespace admin_bff.Controllers.Outbound
 {
     public class CoreServiceClient
     {
-        private readonly HttpClient _httpClient;
+        private readonly RestClient _restClient;
 
-        public CoreServiceClient(HttpClient httpClient, IConfiguration configuration)
+        public CoreServiceClient(IConfiguration configuration)
         {
-            _httpClient = httpClient;
-
             // Get base URL from appsettings.json
             var baseUrl = configuration["CoreService:BaseUrl"];
             if (string.IsNullOrEmpty(baseUrl))
@@ -22,36 +19,35 @@ namespace admin_bff.Controllers.Outbound
                 throw new ArgumentNullException("CoreService:BaseUrl configuration is missing.");
             }
 
-            _httpClient.BaseAddress = new Uri(baseUrl);
+            _restClient = new RestClient(baseUrl);
         }
 
-        public async Task<HttpResponseMessage> SaveUserAsync(UserDto userDto)
+        public async Task<ResponseDto<object>> SaveUserAsync(UserDto userDto)
         {
-            var jsonContent = new StringContent(
-                JsonConvert.SerializeObject(userDto),
-                Encoding.UTF8,
-                "application/json"
-                );
+            var request = new RestRequest("/User", Method.Post);
+            request.AddJsonBody(userDto);
 
-            var response = await _httpClient.PostAsync("/User", jsonContent);
-            response.EnsureSuccessStatusCode();
+            var response = await _restClient.ExecuteAsync<ResponseDto<object>>(request);
+            if (!response.IsSuccessful || response.Data == null)
+            {
+                throw new Exception($"Failed to save user. StatusCode: {response.StatusCode}, Message: {response.ErrorMessage}");
+            }
 
-            return response;
+            return response.Data;
         }
 
-        public async Task<HttpResponseMessage> SaveBookAsync(BookDto bookDto)
+        public async Task<ResponseDto<object>> SaveBookAsync(BookDto bookDto)
         {
-            var jsonContent = new StringContent(
-                JsonConvert.SerializeObject(bookDto),
-                Encoding.UTF8,
-                "application/json"
-                );
+            var request = new RestRequest("/Book", Method.Post);
+            request.AddJsonBody(bookDto);
 
-            var response = await _httpClient.PostAsync("/Book", jsonContent);
-            response.EnsureSuccessStatusCode();
+            var response = await _restClient.ExecuteAsync<ResponseDto<object>>(request);
+            if (!response.IsSuccessful || response.Data == null)
+            {
+                throw new Exception($"Failed to save book. StatusCode: {response.StatusCode}, Message: {response.ErrorMessage}");
+            }
 
-            return response;
+            return response.Data;
         }
-
     }
 }

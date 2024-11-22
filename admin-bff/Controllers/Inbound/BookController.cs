@@ -2,6 +2,7 @@
 using admin_bff.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
 
 namespace admin_bff.Controllers.Inbound
 {
@@ -20,9 +21,14 @@ namespace admin_bff.Controllers.Inbound
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] BookDto bookDto)
         {
-            await _bookService.SaveBook(bookDto);
-            return Ok();
-        }
+            var response = await _bookService.SaveBook(bookDto);
 
+            if (response.Success)
+            {
+                return Ok(response);
+            }
+
+            return BadRequest(response);
+        }
     }
 }

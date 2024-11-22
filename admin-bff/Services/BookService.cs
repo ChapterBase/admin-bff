@@ -1,5 +1,7 @@
 ﻿using admin_bff.Controllers.Outbound;
 using admin_bff.Dtos;
+using ChapterBaseAPI.Dtos;
+using System.Threading.Tasks;
 
 namespace admin_bff.Services
 {
@@ -12,11 +14,22 @@ namespace admin_bff.Services
             _coreServiceClient = coreServiceClient;
         }
 
-        public async Task SaveBook(BookDto bookDto)
+        public async Task<ResponseDto<object>> SaveBook(BookDto bookDto)
         {
-           await _coreServiceClient.SaveBookAsync(bookDto);   
+            try
+            {
+                var response = await _coreServiceClient.SaveBookAsync(bookDto);
+                return response;
+            }
+            catch (Exception ex)
+            {
+                return new ResponseDto<object>
+                {
+                    Success = false,
+                    Message = "An error occurred while saving the book: " + ex.Message,
+                    Data = null
+                };
+            }
         }
-
-
     }
 }
