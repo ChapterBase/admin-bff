@@ -32,6 +32,29 @@ namespace admin_bff.Controllers.Outbound
             return await ExecuteRequestAsync<ResponseDto<object>>(request);
         }
 
+        public async Task<ResponseDto<object>> UpdateUserAsync(UserDto userDto)
+        {
+            var request = new RestRequest("/User", Method.Put);
+            request.AddJsonBody(userDto);
+
+            return await ExecuteRequestAsync<ResponseDto<object>>(request);
+        }
+
+        public async Task<ResponseDto<object>> FindAllUsersByRoleAsync(string role)
+        {
+            var request = new RestRequest("/User/By/Role", Method.Get)
+                .AddQueryParameter("role", role);
+
+            return await ExecuteRequestAsync<ResponseDto<object>>(request);
+        }
+
+        public async Task<ResponseDto<UserDto>> FindUserByIdAsync(Guid id)
+        {
+            var request = new RestRequest($"/User/{id}", Method.Get);
+
+            return await ExecuteRequestAsync<ResponseDto<UserDto>>(request);
+        }
+
         // Book methods
 
         public async Task<ResponseDto<object>> SaveBookAsync(BookDto bookDto)
