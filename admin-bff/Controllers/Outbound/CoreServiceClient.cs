@@ -22,29 +22,63 @@ namespace admin_bff.Controllers.Outbound
             _restClient = new RestClient(baseUrl);
         }
 
+        // User methods
+
         public async Task<ResponseDto<object>> SaveUserAsync(UserDto userDto)
         {
             var request = new RestRequest("/User", Method.Post);
             request.AddJsonBody(userDto);
 
-            var response = await _restClient.ExecuteAsync<ResponseDto<object>>(request);
-            if (!response.IsSuccessful || response.Data == null)
-            {
-                throw new Exception($"Failed to save user. StatusCode: {response.StatusCode}, Message: {response.ErrorMessage}");
-            }
-
-            return response.Data;
+            return await ExecuteRequestAsync<ResponseDto<object>>(request);
         }
+
+        // Book methods
 
         public async Task<ResponseDto<object>> SaveBookAsync(BookDto bookDto)
         {
             var request = new RestRequest("/Book", Method.Post);
             request.AddJsonBody(bookDto);
 
-            var response = await _restClient.ExecuteAsync<ResponseDto<object>>(request);
+            return await ExecuteRequestAsync<ResponseDto<object>>(request);
+        }
+
+        public async Task<ResponseDto<object>> UpdateBookAsync(BookDto bookDto)
+        {
+            var request = new RestRequest("/Book", Method.Put);
+            request.AddJsonBody(bookDto);
+
+            return await ExecuteRequestAsync<ResponseDto<object>>(request);
+        }
+
+        public async Task<ResponseDto<object>> FindAllBooksAsync(int page, int size)
+        {
+            var request = new RestRequest("/Book", Method.Get)
+                .AddQueryParameter("page", page.ToString())
+                .AddQueryParameter("size", size.ToString());
+
+            return await ExecuteRequestAsync<ResponseDto<object>>(request);
+        }
+
+        public async Task<ResponseDto<BookDto>> FindBookByIdAsync(Guid id)
+        {
+            var request = new RestRequest($"/Book/{id}", Method.Get);
+
+            return await ExecuteRequestAsync<ResponseDto<BookDto>>(request);
+        }
+
+        public async Task<ResponseDto<object>> DeleteBookAsync(Guid id)
+        {
+            var request = new RestRequest($"/Book/{id}", Method.Delete);
+
+            return await ExecuteRequestAsync<ResponseDto<object>>(request);
+        }
+
+        private async Task<T> ExecuteRequestAsync<T>(RestRequest request) where T : class
+        {
+            var response = await _restClient.ExecuteAsync<T>(request);
             if (!response.IsSuccessful || response.Data == null)
             {
-                throw new Exception($"Failed to save book. StatusCode: {response.StatusCode}, Message: {response.ErrorMessage}");
+                throw new Exception($"Request failed. StatusCode: {response.StatusCode}, Message: {response.ErrorMessage}");
             }
 
             return response.Data;
