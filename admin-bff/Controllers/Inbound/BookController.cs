@@ -1,29 +1,19 @@
 ﻿using admin_bff.Dtos;
 using admin_bff.Services;
-using ChapterBaseAPI.Dtos;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Threading.Tasks;
 
 namespace admin_bff.Controllers.Inbound
 {
     [ApiController]
     [Route("[controller]")]
     [Authorize]
-    public class BookController : Controller
+    public class BookController(BookService bookService) : Controller
     {
-        private readonly BookService _bookService;
-
-        public BookController(BookService bookService)
-        {
-            _bookService = bookService;
-        }
-
         [HttpPost]
         public async Task<IActionResult> Save([FromBody] BookDto bookDto)
         {
-            var response = await _bookService.SaveBook(bookDto);
+            var response = await bookService.SaveBook(bookDto);
 
             if (response.Success)
             {
@@ -36,7 +26,7 @@ namespace admin_bff.Controllers.Inbound
         [HttpPut]
         public async Task<IActionResult> Update([FromBody] BookDto bookDto)
         {
-            var response = await _bookService.UpdateBook(bookDto);
+            var response = await bookService.UpdateBook(bookDto);
 
             if (response.Success)
             {
@@ -46,10 +36,10 @@ namespace admin_bff.Controllers.Inbound
             return BadRequest(response);
         }
 
-        [HttpGet]
-        public async Task<IActionResult> FindAll([FromQuery] int page, [FromQuery] int size)
+        [HttpPost("All")]
+        public async Task<IActionResult> FindAll([FromBody] RequestDto request)
         {
-            var response = await _bookService.FindAllBooks(page, size);
+            var response = await bookService.FindAllBooks(request);
 
             if (response.Success)
             {
@@ -62,7 +52,7 @@ namespace admin_bff.Controllers.Inbound
         [HttpGet("{id}")]
         public async Task<IActionResult> FindById([FromRoute] Guid id)
         {
-            var response = await _bookService.FindBookById(id);
+            var response = await bookService.FindBookById(id);
 
             if (response.Success)
             {
@@ -75,7 +65,7 @@ namespace admin_bff.Controllers.Inbound
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete([FromRoute] Guid id)
         {
-            var response = await _bookService.DeleteBook(id);
+            var response = await bookService.DeleteBook(id);
 
             if (response.Success)
             {

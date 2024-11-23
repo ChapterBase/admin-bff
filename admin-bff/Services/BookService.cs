@@ -6,20 +6,13 @@ using System.Threading.Tasks;
 
 namespace admin_bff.Services
 {
-    public class BookService
+    public class BookService(CoreServiceClient coreServiceClient)
     {
-        private readonly CoreServiceClient _coreServiceClient;
-
-        public BookService(CoreServiceClient coreServiceClient)
-        {
-            _coreServiceClient = coreServiceClient;
-        }
-
         public async Task<ResponseDto<object>> SaveBook(BookDto bookDto)
         {
             try
             {
-                return await _coreServiceClient.SaveBookAsync(bookDto);
+                return await coreServiceClient.SaveBookAsync(bookDto);
             }
             catch (Exception ex)
             {
@@ -35,7 +28,7 @@ namespace admin_bff.Services
         {
             try
             {
-                return await _coreServiceClient.UpdateBookAsync(bookDto);
+                return await coreServiceClient.UpdateBookAsync(bookDto);
             }
             catch (Exception ex)
             {
@@ -47,11 +40,11 @@ namespace admin_bff.Services
             }
         }
 
-        public async Task<ResponseDto<object>> FindAllBooks(int page, int size)
+        public async Task<ResponseDto<object>> FindAllBooks(RequestDto request)
         {
             try
             {
-                return await _coreServiceClient.FindAllBooksAsync(page, size);
+                return await coreServiceClient.FindAllBooksAsync(request);
             }
             catch (Exception ex)
             {
@@ -67,7 +60,7 @@ namespace admin_bff.Services
         {
             try
             {
-                return await _coreServiceClient.FindBookByIdAsync(id);
+                return await coreServiceClient.FindBookByIdAsync(id);
             }
             catch (Exception ex)
             {
@@ -83,7 +76,7 @@ namespace admin_bff.Services
         {
             try
             {
-                return await _coreServiceClient.DeleteBookAsync(id);
+                return await coreServiceClient.DeleteBookAsync(id);
             }
             catch (Exception ex)
             {

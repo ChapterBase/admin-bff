@@ -12,7 +12,6 @@ namespace admin_bff.Controllers.Outbound
 
         public CoreServiceClient(IConfiguration configuration)
         {
-            // Get base URL from appsettings.json
             var baseUrl = configuration["CoreService:BaseUrl"];
             if (string.IsNullOrEmpty(baseUrl))
             {
@@ -73,14 +72,14 @@ namespace admin_bff.Controllers.Outbound
             return await ExecuteRequestAsync<ResponseDto<object>>(request);
         }
 
-        public async Task<ResponseDto<object>> FindAllBooksAsync(int page, int size)
+        public async Task<ResponseDto<object>> FindAllBooksAsync(RequestDto request)
         {
-            var request = new RestRequest("/Book", Method.Get)
-                .AddQueryParameter("page", page.ToString())
-                .AddQueryParameter("size", size.ToString());
+            var restRequest = new RestRequest("/Book/All", Method.Post);
+            restRequest.AddJsonBody(request);
 
-            return await ExecuteRequestAsync<ResponseDto<object>>(request);
+            return await ExecuteRequestAsync<ResponseDto<object>>(restRequest);
         }
+
 
         public async Task<ResponseDto<BookDto>> FindBookByIdAsync(Guid id)
         {
