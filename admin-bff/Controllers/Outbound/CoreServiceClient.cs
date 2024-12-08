@@ -3,6 +3,10 @@ using ChapterBaseAPI.Dtos;
 using RestSharp;
 using System;
 using System.Threading.Tasks;
+using ChapterBaseAPI.Dto;
+using Newtonsoft.Json;
+using System.Net.Http;
+using System.Text;
 
 namespace admin_bff.Controllers.Outbound
 {
@@ -104,6 +108,32 @@ namespace admin_bff.Controllers.Outbound
             }
 
             return response.Data;
+        }
+
+        // Banner methods
+
+        public async Task<ResponseDto<object>> SaveBannerAsync(BannerDto bannerDto)
+        {
+            var request = new RestRequest("/Banner", Method.Post);
+            request.AddJsonBody(bannerDto);
+
+            return await ExecuteRequestAsync<ResponseDto<object>>(request);
+        }
+
+        public async Task<ResponseDto<object>> UpdateBannerAsync(BannerDto bannerDto)
+        {
+            var request = new RestRequest("/Banner", Method.Put);
+            request.AddJsonBody(bannerDto);
+
+            return await ExecuteRequestAsync<ResponseDto<object>>(request);
+        }
+
+        public async Task<ResponseDto<object>> FindAllBannersByStatusAsync(string status)
+        {
+            var request = new RestRequest("/Banner/By/Status", Method.Get)
+                .AddQueryParameter("status", status);
+
+            return await ExecuteRequestAsync<ResponseDto<object>>(request);
         }
     }
 }
